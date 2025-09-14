@@ -1,0 +1,33 @@
+import requests
+import pandas as pd
+
+# Define API key and endpoint
+api_key = 'efb5a47fc16d4d7097461720251109'
+city = input("Enter city: ")
+api_url = f"http://api.weatherapi.com/v1/current.json?key={api_key}&q={city}"
+
+# Make the request
+response = requests.get(api_url)
+
+# Check for successful response
+if response.status_code == 200:
+    data = response.json()
+
+    # Extract key weather info from WeatherAPI.com structure
+    weather_info = {
+        'City': data['location']['name'],
+        'Region': data['location']['region'],
+        'Country': data['location']['country'],
+        'Temperature (°C)': data['current']['temp_c'],
+        'Humidity (%)': data['current']['humidity'],
+        'Weather': data['current']['condition']['text'],
+        'Wind Speed (kph)': data['current']['wind_kph']
+    }
+
+    # Convert to DataFrame for display or further processing
+    df = pd.DataFrame([weather_info])
+    print(df)
+
+else:
+    print(f"Error {response.status_code}: {response.reason}")
+    print("Response content:", response.text)
